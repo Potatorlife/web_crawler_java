@@ -11,7 +11,6 @@ public class CrawlerConfig {
     private final long politenessMs;
     private final Set<String> allowedHosts;
 
-    // new stuff
     private final int fetchRetries;
     private final long fetchBackoffMs;
     private final String proxyHost;
@@ -40,7 +39,6 @@ public class CrawlerConfig {
         this.proxyPort = proxyPort;
     }
 
-    // --- existing getters ---
     public int getMaxPages() {
         return maxPages;
     }
@@ -65,7 +63,6 @@ public class CrawlerConfig {
         return !allowedHosts.isEmpty();
     }
 
-    // --- new getters ---
     public int getFetchRetries() {
         return fetchRetries;
     }

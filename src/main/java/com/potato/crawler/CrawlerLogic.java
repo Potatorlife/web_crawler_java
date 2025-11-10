@@ -149,14 +149,12 @@ public class CrawlerLogic {
                         rateLimiter.acquire(host);
                     }
 
-                    // metrics: request in flight
                     METRICS.inFlight.incrementAndGet();
                     long t0 = System.nanoTime();
                     FetchResult result = null;
                     try {
                         result = fetcher.fetch(currentUrl);
                     } catch (Exception ex) {
-                        // failed fetch
                         METRICS.recordFailure(host != null ? host : "unknown");
                         continue;
                     } finally {
@@ -201,7 +199,6 @@ public class CrawlerLogic {
                             page.title,
                             currentUrl);
 
-                    // metrics: successful fetch
                     long bytes = (result.body != null) ? result.body.length() : 0;
                     METRICS.recordFetch(millis, bytes);
 

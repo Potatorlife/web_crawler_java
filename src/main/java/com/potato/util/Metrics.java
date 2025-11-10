@@ -13,11 +13,9 @@ public class Metrics {
     public final AtomicLong bytesFetched = new AtomicLong();
     public final AtomicLong inFlight     = new AtomicLong();
 
-    // simple moving stats
     private final AtomicLong fetchCount       = new AtomicLong();
     private final AtomicLong totalFetchMillis = new AtomicLong();
 
-    // per-host error counts (optional)
     public final ConcurrentHashMap<String, AtomicLong> errorsByHost = new ConcurrentHashMap<>();
 
     private final ScheduledExecutorService reporter = Executors.newSingleThreadScheduledExecutor();
