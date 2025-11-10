@@ -1,4 +1,4 @@
-package main.java.com.potato.fetcher;
+package com.potato.fetcher;
 
 import java.io.IOException;
 import java.net.URI;

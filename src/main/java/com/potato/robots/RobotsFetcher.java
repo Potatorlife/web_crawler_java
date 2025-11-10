@@ -1,4 +1,4 @@
-package main.java.com.potato.robots;
+package com.potato.robots;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,7 +21,9 @@ public class RobotsFetcher {
         String robotsUrl = scheme + "://" + host + "/robots.txt";
 
         try {
-            URL url = new URL(robotsUrl);
+            URI robotsUri = URI.create(robotsUrl);
+            URL url = robotsUri.toURL();
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("User-Agent", userAgent);
             conn.setConnectTimeout(3000);
@@ -29,7 +31,6 @@ public class RobotsFetcher {
 
             int code = conn.getResponseCode();
             if (code != 200) {
-                // no robots or not accessible → allow everything
                 return rules;
             }
 
@@ -43,13 +44,11 @@ public class RobotsFetcher {
                         continue;
                     }
 
-                    // User-agent: *
                     if (line.toLowerCase().startsWith("user-agent:")) {
                         String ua = line.substring("user-agent:".length()).trim();
                         inGlobalUserAgent = ua.equals("*");
                     } else if (inGlobalUserAgent && line.toLowerCase().startsWith("disallow:")) {
                         String path = line.substring("disallow:".length()).trim();
-                        // empty disallow means allow all
                         if (!path.isEmpty()) {
                             rules.addDisallow(path);
                         }
@@ -57,7 +56,6 @@ public class RobotsFetcher {
                 }
             }
         } catch (IOException e) {
-            // on error, just allow everything
             return rules;
         }
 

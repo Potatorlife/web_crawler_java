@@ -1,4 +1,4 @@
-package main.java.com.potato.parser;
+package com.potato.parser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

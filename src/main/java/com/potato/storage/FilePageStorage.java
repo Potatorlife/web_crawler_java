@@ -1,4 +1,4 @@
-package main.java.com.potato.storage;
+package com.potato.storage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

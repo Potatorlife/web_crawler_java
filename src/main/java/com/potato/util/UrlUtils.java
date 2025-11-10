@@ -1,4 +1,4 @@
-package main.java.com.potato.util;
+package com.potato.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;

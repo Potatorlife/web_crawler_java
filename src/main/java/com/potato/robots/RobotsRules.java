@@ -1,4 +1,4 @@
-package main.java.com.potato.robots;
+package com.potato.robots;
 
 import java.util.ArrayList;
 import java.util.List;

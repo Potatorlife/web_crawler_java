@@ -1,9 +1,9 @@
-package main.java.com.potato.crawler;
+package com.potato.crawler;
 
 import java.util.List;
 
-import main.java.com.potato.config.ConfigLoader;
-import main.java.com.potato.config.CrawlerConfig;
+import com.potato.config.ConfigLoader;
+import com.potato.config.CrawlerConfig;
 
 public class App {
     public static void main(String[] args) {

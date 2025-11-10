@@ -1,4 +1,4 @@
-package main.java.com.potato.util;
+package com.potato.util;
 
 import java.util.HashMap;
 import java.util.Map;

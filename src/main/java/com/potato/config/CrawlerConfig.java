@@ -1,4 +1,4 @@
-package main.java.com.potato.config;
+package com.potato.config;
 
 import java.util.Collections;
 import java.util.Set;

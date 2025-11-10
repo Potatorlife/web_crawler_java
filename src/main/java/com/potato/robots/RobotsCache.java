@@ -1,4 +1,4 @@
-package main.java.com.potato.robots;
+package com.potato.robots;
 
 import java.net.URI;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package main.java.com.potato.crawler;
+package com.potato.crawler;
 
 import java.io.IOException;
 import java.net.URI;
@@ -8,17 +8,17 @@ import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import main.java.com.potato.config.CrawlerConfig;
-import main.java.com.potato.fetcher.PageFetcher;
-import main.java.com.potato.fetcher.PageFetcher.FetchResult;
-import main.java.com.potato.parser.HtmlParser;
-import main.java.com.potato.util.HostRateLimiter;
-import main.java.com.potato.util.UrlUtils;
-import main.java.com.potato.robots.RobotsCache;
-import main.java.com.potato.robots.RobotsFetcher;
-import main.java.com.potato.robots.RobotsRules;
-import main.java.com.potato.storage.FilePageStorage;
-import main.java.com.potato.storage.PageStorage;
+import com.potato.config.CrawlerConfig;
+import com.potato.fetcher.PageFetcher;
+import com.potato.fetcher.PageFetcher.FetchResult;
+import com.potato.parser.HtmlParser;
+import com.potato.util.HostRateLimiter;
+import com.potato.util.UrlUtils;
+import com.potato.robots.RobotsCache;
+import com.potato.robots.RobotsFetcher;
+import com.potato.robots.RobotsRules;
+import com.potato.storage.FilePageStorage;
+import com.potato.storage.PageStorage;
 
 public class CrawlerLogic {
 
@@ -86,7 +86,7 @@ public class CrawlerLogic {
 
     private boolean isHostAllowed(String url) {
         if (!config.hasHostWhitelist()) {
-            return true; 
+            return true;
         }
         try {
             URI uri = new URI(url);
@@ -110,7 +110,6 @@ public class CrawlerLogic {
 
                     String currentUrl = UrlUtils.normalize(current.url);
 
-                    // domain whitelist check
                     if (!isHostAllowed(currentUrl)) {
                         continue;
                     }
@@ -179,7 +178,6 @@ public class CrawlerLogic {
                         running = false;
                     }
 
-                    // enqueue children (but only allowed hosts)
                     for (String link : page.links) {
                         String normLink = UrlUtils.normalize(link);
                         if (isHostAllowed(normLink) && !visited.contains(normLink)) {
