@@ -13,6 +13,7 @@ import com.potato.fetcher.PageFetcher;
 import com.potato.fetcher.PageFetcher.FetchResult;
 import com.potato.parser.HtmlParser;
 import com.potato.util.HostRateLimiter;
+import com.potato.util.Metrics;
 import com.potato.util.UrlUtils;
 import com.potato.robots.RobotsCache;
 import com.potato.robots.RobotsFetcher;
@@ -36,6 +37,9 @@ public class CrawlerLogic {
     private volatile boolean running = true;
     private final AtomicInteger sequence = new AtomicInteger(0);
 
+    // metrics
+    private final Metrics METRICS = new Metrics();
+
     public CrawlerLogic(CrawlerConfig config) {
         this.config = config;
         this.fetcher = new PageFetcher(config.getUserAgent());
@@ -51,6 +55,9 @@ public class CrawlerLogic {
     }
 
     public void crawl(List<String> seedUrls) {
+        // start metrics reporting
+        METRICS.startReporting();
+
         for (String seed : seedUrls) {
             String norm = UrlUtils.normalize(seed);
             if (isHostAllowed(norm)) {
@@ -111,14 +118,17 @@ public class CrawlerLogic {
                     String currentUrl = UrlUtils.normalize(current.url);
 
                     if (!isHostAllowed(currentUrl)) {
+                        METRICS.recordSkip();
                         continue;
                     }
 
                     if (visited.contains(currentUrl)) {
+                        METRICS.recordSkip();
                         continue;
                     }
 
                     if (current.depth > config.getMaxDepth()) {
+                        METRICS.recordSkip();
                         continue;
                     }
 
@@ -130,6 +140,7 @@ public class CrawlerLogic {
                     }
                     if (!rules.isAllowed(path)) {
                         System.out.println("Blocked by robots.txt: " + currentUrl);
+                        METRICS.recordSkip();
                         continue;
                     }
 
@@ -138,22 +149,38 @@ public class CrawlerLogic {
                         rateLimiter.acquire(host);
                     }
 
-                    FetchResult result = fetcher.fetch(currentUrl);
+                    // metrics: request in flight
+                    METRICS.inFlight.incrementAndGet();
+                    long t0 = System.nanoTime();
+                    FetchResult result = null;
+                    try {
+                        result = fetcher.fetch(currentUrl);
+                    } catch (Exception ex) {
+                        // failed fetch
+                        METRICS.recordFailure(host != null ? host : "unknown");
+                        continue;
+                    } finally {
+                        METRICS.inFlight.decrementAndGet();
+                    }
+                    long millis = (System.nanoTime() - t0) / 1_000_000L;
 
                     if (result.statusCode != 200) {
                         System.out.println("Failed " + currentUrl + " status: " + result.statusCode);
+                        METRICS.recordFailure(host != null ? host : "unknown");
                         continue;
                     }
 
                     if (result.contentType == null ||
                             !result.contentType.toLowerCase().contains("text/html")) {
                         System.out.println("Skip non-HTML: " + currentUrl + " (" + result.contentType + ")");
+                        METRICS.recordSkip();
                         continue;
                     }
 
                     long maxSize = 1_000_000;
                     if (result.contentLength > 0 && result.contentLength > maxSize) {
                         System.out.println("Skip too large: " + currentUrl + " (" + result.contentLength + " bytes)");
+                        METRICS.recordSkip();
                         continue;
                     }
 
@@ -173,6 +200,10 @@ public class CrawlerLogic {
                             current.depth,
                             page.title,
                             currentUrl);
+
+                    // metrics: successful fetch
+                    long bytes = (result.body != null) ? result.body.length() : 0;
+                    METRICS.recordFetch(millis, bytes);
 
                     if (num >= config.getMaxPages()) {
                         running = false;
