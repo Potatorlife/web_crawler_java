@@ -3,6 +3,14 @@ package com.potato.robots;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Very simple representation of robots.txt rules.
+ * - stores a list of disallowed path prefixes
+ * - stores any sitemap URLs found
+ *
+ * This is NOT a full robots.txt implementation, just enough
+ * for a polite crawler.
+ */
 public class RobotsRules {
     private final List<String> disallows = new ArrayList<>();
     private final List<String> sitemaps = new ArrayList<>();

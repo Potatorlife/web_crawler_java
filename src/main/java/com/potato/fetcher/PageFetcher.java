@@ -16,15 +16,18 @@ public class PageFetcher {
     private final int maxRetries;
     private final long backoffMs;
 
+     // simple constructor with defaults (3 retries, 500ms backoff, no proxy)
     public PageFetcher(String userAgent) {
         this(userAgent, 3, 500, null);
     }
 
+    // main constructor that allows configuring retries, backoff and proxy
     public PageFetcher(String userAgent,
                        int maxRetries,
                        long backoffMs,
                        ProxySelector proxySelector) {
 
+         // build an HttpClient that follows redirects and has a connect timeout
         HttpClient.Builder builder = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .connectTimeout(Duration.ofSeconds(5));
@@ -39,6 +42,10 @@ public class PageFetcher {
         this.backoffMs = backoffMs;
     }
 
+    /**
+     * Fetch a single URL and return status, headers and body.
+     * Retries on IO errors with exponential-ish backoff.
+     */
     public FetchResult fetch(String url) throws IOException, InterruptedException {
         IOException lastIo = null;
 
@@ -88,12 +95,17 @@ public class PageFetcher {
         throw lastIo != null ? lastIo : new IOException("Failed to fetch " + url);
     }
 
+     // helper to gunzip a byte[] into plain bytes
     private byte[] ungzip(byte[] gzipped) throws IOException {
         try (GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(gzipped))) {
             return gis.readAllBytes();
         }
     }
 
+    /**
+     * Simple value object that holds everything the crawler needs
+     * from an HTTP fetch.
+     */
     public static class FetchResult {
         public final int statusCode;
         public final String body;

@@ -10,6 +10,14 @@ import java.util.Set;
 
 public class HtmlParser {
 
+    /**
+     * Parse the raw HTML into a Jsoup Document, extract the page title
+     * and all absolute links (<a href="...">).
+     *
+     * @param html    the HTML source we fetched
+     * @param baseUrl the URL we fetched it from (used by Jsoup to resolve relative links)
+     * @return a simple ParsedPage with title + unique links
+     */
     public ParsedPage parse(String html, String baseUrl) {
         Document doc = Jsoup.parse(html, baseUrl);
 

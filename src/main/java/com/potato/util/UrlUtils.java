@@ -3,8 +3,23 @@ package com.potato.util;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/**
+ * URL helper methods used by the crawler.
+ * Right now we only have a simple "normalize" to make URLs comparable.
+ */
 public class UrlUtils {
 
+    /**
+     * Normalize a URL so we store it in a consistent form.
+     * Things we do here:
+     * - default missing scheme to https
+     * - lowercase the host
+     * - ensure there is at least "/" as a path
+     * - keep the query string if present
+     *
+     * @param url original URL (possibly messy)
+     * @return normalized URL or the original input if parsing failed
+     */
     public static String normalize(String url) {
         if (url == null || url.isBlank()) {
             return url;

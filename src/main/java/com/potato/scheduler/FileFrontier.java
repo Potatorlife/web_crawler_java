@@ -6,6 +6,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * A frontier implementation that keeps URLs in memory (priority queue)
+ * but also appends them to a file so the frontier can survive restarts.
+ *
+ * Format in file: "<depth> <url>"
+ */
 public class FileFrontier implements Frontier {
 
     private final File file;
@@ -59,6 +65,9 @@ public class FileFrontier implements Frontier {
         } catch (IOException ignored) {}
     }
 
+    /**
+     * Internal wrapper to sort URLs by depth first, then by insertion order.
+     */
     private static class Prioritized implements Comparable<Prioritized> {
         final String url;
         final int depth;

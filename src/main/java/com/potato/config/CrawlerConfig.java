@@ -29,6 +29,8 @@ public class CrawlerConfig {
         this.maxDepth = maxDepth;
         this.userAgent = userAgent;
         this.politenessMs = politenessMs;
+
+        // make sure allowedHosts is never null and cannot be modified from outside
         this.allowedHosts = (allowedHosts == null)
                 ? Collections.emptySet()
                 : Collections.unmodifiableSet(allowedHosts);
@@ -39,6 +41,7 @@ public class CrawlerConfig {
         this.proxyPort = proxyPort;
     }
 
+    // simple getters for all the config values
     public int getMaxPages() {
         return maxPages;
     }
@@ -79,6 +82,7 @@ public class CrawlerConfig {
         return proxyPort;
     }
 
+    // convenience: check if proxy settings are usable
     public boolean hasProxy() {
         return proxyHost != null && !proxyHost.isBlank() && proxyPort > 0;
     }

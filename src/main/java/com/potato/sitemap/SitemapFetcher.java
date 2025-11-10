@@ -12,6 +12,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+/**
+ * Very small helper that fetches an XML sitemap and extracts all <loc> URLs.
+ * This lets the crawler discover lots of pages quickly without brute-force crawling.
+ */
 public class SitemapFetcher {
 
     private final String userAgent;

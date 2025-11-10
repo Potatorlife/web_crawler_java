@@ -9,12 +9,20 @@ import java.net.HttpURLConnection;
 
 public class RobotsFetcher {
 
+    // user agent to send when requesting /robots.txt
     private final String userAgent;
 
     public RobotsFetcher(String userAgent) {
         this.userAgent = userAgent;
     }
 
+    /**
+     * Fetch and parse robots.txt for a given scheme + host.
+     * Only implements a simple subset:
+     * - User-agent: *
+     * - Disallow: ...
+     * - Sitemap: ...
+     */
     public RobotsRules fetchForHost(String scheme, String host) {
         RobotsRules rules = new RobotsRules();
 
@@ -71,6 +79,10 @@ public class RobotsFetcher {
         return rules;
     }
 
+    /**
+     * Convenience method: take a full URL, extract scheme + host,
+     * and then fetch robots.txt for that host.
+     */
     public RobotsRules fetchForUrl(String urlStr) {
         try {
             URI uri = URI.create(urlStr);
