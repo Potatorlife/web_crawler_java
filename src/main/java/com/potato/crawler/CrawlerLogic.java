@@ -37,7 +37,7 @@ public class CrawlerLogic {
     private volatile boolean running = true;
     private final AtomicInteger sequence = new AtomicInteger(0);
 
-    // metrics
+    // metrics collection (fetched, failed, skipped, in flight, etc.)
     private final Metrics METRICS = new Metrics();
 
     public CrawlerLogic(CrawlerConfig config) {
@@ -51,6 +51,7 @@ public class CrawlerLogic {
         } catch (IOException e) {
             throw new RuntimeException("Failed to initialize storage", e);
         }
+        // for now: fixed 4 worker threads
         this.executor = Executors.newFixedThreadPool(4);
     }
 
@@ -65,10 +66,12 @@ public class CrawlerLogic {
             }
         }
 
+        // start worker threads
         for (int i = 0; i < 4; i++) {
             executor.submit(new Worker());
         }
 
+        // main loop: wait for crawling to finish or max pages reached
         try {
             while (running) {
                 if (pagesCrawled.get() >= config.getMaxPages()) {
@@ -91,6 +94,7 @@ public class CrawlerLogic {
         }
     }
 
+    // check if the host of a given URL is allowed based on the whitelist
     private boolean isHostAllowed(String url) {
         if (!config.hasHostWhitelist()) {
             return true;
@@ -105,6 +109,7 @@ public class CrawlerLogic {
         }
     }
 
+    // worker that repeatedly takes URLs from the frontier, fetches, parses, and enqueues new links
     private class Worker implements Runnable {
         @Override
         public void run() {
@@ -226,6 +231,7 @@ public class CrawlerLogic {
         }
     }
 
+     // simple item representing one URL to crawl, plus its depth and a sequence number
     private static class CrawlItem implements Comparable<CrawlItem> {
         final String url;
         final int depth;
@@ -237,6 +243,7 @@ public class CrawlerLogic {
             this.seq = seq;
         }
 
+        // priority: lower depth first; if same depth, use sequence to keep FIFO order
         @Override
         public int compareTo(CrawlItem other) {
             int c = Integer.compare(this.depth, other.depth);

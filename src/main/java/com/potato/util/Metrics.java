@@ -6,6 +6,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Lightweight metrics collector for the crawler.
+ *
+ * Tracks:
+ * - pages fetched / failed / skipped
+ * - bytes fetched
+ * - in-flight requests
+ * - average fetch time
+ * - errors per host
+ *
+ * Also prints a periodic snapshot and a final summary on shutdown.
+ */
 public class Metrics {
     public final AtomicLong pagesFetched = new AtomicLong();
     public final AtomicLong pagesFailed  = new AtomicLong();
