@@ -26,20 +26,44 @@ public class PageFetcher {
                 .GET()
                 .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return new FetchResult(response.statusCode(), response.body(), url);
+        // headers
+        String contentType = response.headers()
+                .firstValue("Content-Type")
+                .orElse(null);
+
+        long contentLength = response.headers()
+                .firstValueAsLong("Content-Length")
+                .orElse(-1L);
+
+        return new FetchResult(
+                response.statusCode(),
+                response.body(),
+                url,
+                contentType,
+                contentLength
+        );
     }
 
     public static class FetchResult {
         public final int statusCode;
         public final String body;
         public final String url;
+        public final String contentType;
+        public final long contentLength;
 
-        public FetchResult(int statusCode, String body, String url) {
+        public FetchResult(int statusCode,
+                           String body,
+                           String url,
+                           String contentType,
+                           long contentLength) {
             this.statusCode = statusCode;
             this.body = body;
             this.url = url;
+            this.contentType = contentType;
+            this.contentLength = contentLength;
         }
     }
 }

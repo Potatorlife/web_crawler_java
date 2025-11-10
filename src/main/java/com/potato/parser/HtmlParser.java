@@ -20,7 +20,6 @@ public class HtmlParser {
         for (Element a : anchors) {
             String abs = a.attr("abs:href");
             if (abs != null && !abs.isBlank()) {
-                // drop #fragment
                 links.add(abs.split("#")[0]);
             }
         }
