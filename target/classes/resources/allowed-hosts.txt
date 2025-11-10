@@ -1,3 +1,5 @@
-example.com
-www.example.com
-docs.oracle.com
+www.gnu.org
+www.python.org
+www.openjdk.org
+www.eclipse.org
+httpbin.org

@@ -11,11 +11,21 @@ public class CrawlerConfig {
     private final long politenessMs;
     private final Set<String> allowedHosts;
 
+    // new stuff
+    private final int fetchRetries;
+    private final long fetchBackoffMs;
+    private final String proxyHost;
+    private final int proxyPort;
+
     public CrawlerConfig(int maxPages,
                          int maxDepth,
                          String userAgent,
                          long politenessMs,
-                         Set<String> allowedHosts) {
+                         Set<String> allowedHosts,
+                         int fetchRetries,
+                         long fetchBackoffMs,
+                         String proxyHost,
+                         int proxyPort) {
         this.maxPages = maxPages;
         this.maxDepth = maxDepth;
         this.userAgent = userAgent;
@@ -23,8 +33,14 @@ public class CrawlerConfig {
         this.allowedHosts = (allowedHosts == null)
                 ? Collections.emptySet()
                 : Collections.unmodifiableSet(allowedHosts);
+
+        this.fetchRetries = fetchRetries;
+        this.fetchBackoffMs = fetchBackoffMs;
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
     }
 
+    // --- existing getters ---
     public int getMaxPages() {
         return maxPages;
     }
@@ -47,5 +63,26 @@ public class CrawlerConfig {
 
     public boolean hasHostWhitelist() {
         return !allowedHosts.isEmpty();
+    }
+
+    // --- new getters ---
+    public int getFetchRetries() {
+        return fetchRetries;
+    }
+
+    public long getFetchBackoffMs() {
+        return fetchBackoffMs;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    public boolean hasProxy() {
+        return proxyHost != null && !proxyHost.isBlank() && proxyPort > 0;
     }
 }

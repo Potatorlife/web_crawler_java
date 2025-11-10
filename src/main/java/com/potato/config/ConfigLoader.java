@@ -25,6 +25,12 @@ public class ConfigLoader {
             long politenessMs = Long.parseLong(props.getProperty("crawler.politenessMs", "500"));
             String allowedHostsFile = props.getProperty("crawler.allowedHostsFile", null);
 
+            // new
+            int fetchRetries = Integer.parseInt(props.getProperty("crawler.fetchRetries", "3"));
+            long fetchBackoffMs = Long.parseLong(props.getProperty("crawler.fetchBackoffMs", "500"));
+            String proxyHost = props.getProperty("crawler.proxyHost", "");
+            int proxyPort = Integer.parseInt(props.getProperty("crawler.proxyPort", "0"));
+
             Set<String> allowedHosts = new HashSet<>();
             if (allowedHostsFile != null) {
                 try (InputStream hostsIn = ConfigLoader.class.getClassLoader()
@@ -43,7 +49,17 @@ public class ConfigLoader {
                 }
             }
 
-            return new CrawlerConfig(maxPages, maxDepth, userAgent, politenessMs, allowedHosts);
+            return new CrawlerConfig(
+                    maxPages,
+                    maxDepth,
+                    userAgent,
+                    politenessMs,
+                    allowedHosts,
+                    fetchRetries,
+                    fetchBackoffMs,
+                    proxyHost,
+                    proxyPort
+            );
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to load configuration", e);

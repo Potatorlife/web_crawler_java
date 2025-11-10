@@ -44,13 +44,22 @@ public class RobotsFetcher {
                         continue;
                     }
 
-                    if (line.toLowerCase().startsWith("user-agent:")) {
+                    String lower = line.toLowerCase();
+
+                    if (lower.startsWith("user-agent:")) {
                         String ua = line.substring("user-agent:".length()).trim();
                         inGlobalUserAgent = ua.equals("*");
-                    } else if (inGlobalUserAgent && line.toLowerCase().startsWith("disallow:")) {
+
+                    } else if (inGlobalUserAgent && lower.startsWith("disallow:")) {
                         String path = line.substring("disallow:".length()).trim();
                         if (!path.isEmpty()) {
                             rules.addDisallow(path);
+                        }
+
+                    } else if (lower.startsWith("sitemap:")) {
+                        String sm = line.substring("sitemap:".length()).trim();
+                        if (!sm.isEmpty()) {
+                            rules.addSitemap(sm);
                         }
                     }
                 }
