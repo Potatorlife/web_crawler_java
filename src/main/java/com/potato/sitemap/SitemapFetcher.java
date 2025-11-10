@@ -1,4 +1,4 @@
-package com.potato.fetcher;
+package com.potato.sitemap;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -40,7 +40,6 @@ public class SitemapFetcher {
                         .parse(in);
                 doc.getDocumentElement().normalize();
 
-                // handle simple <urlset><url><loc>...</loc></url></urlset>
                 NodeList locs = doc.getElementsByTagName("loc");
                 for (int i = 0; i < locs.getLength(); i++) {
                     String loc = locs.item(i).getTextContent().trim();

@@ -1,4 +1,4 @@
-package com.potato.frontier;
+package com.potato.scheduler;
 
 public interface Frontier extends AutoCloseable {
     void add(String url, int depth);
